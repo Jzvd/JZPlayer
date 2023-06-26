@@ -14,7 +14,7 @@ project("jzplayer")
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-file(GLOB_RECURSE jzmpeg_c ../../../../../jzmpeg/*.c)
+file(GLOB_RECURSE jzmpeg_c ${CMAKE_CURRENT_SOURCE_DIR}/../../../../jzmpeg/*.c)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../../../jzmpeg/)
 
 add_library( # Sets the name of the library.
