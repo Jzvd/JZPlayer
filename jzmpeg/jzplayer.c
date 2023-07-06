@@ -4,13 +4,13 @@
 #include "libavutil/imgutils.h"
 #include "libswscale/swscale.h"
 
-void read_thread(char *url, int audio_open()) {
+void read_thread(const char *url, int audio_open()) {
     //初始化一些东西
-    if (frame_queue_init(&audio_q, NULL, SAMPLE_QUEUE_SIZE, 1) < 0) {
+    if (frame_queue_init(&audio_q,  SAMPLE_QUEUE_SIZE, 1) < 0) {
         printf("frame_queue_init audio_q ERROR");
         return;
     }
-    if (frame_queue_init(&video_q, NULL, VIDEO_PICTURE_QUEUE_SIZE, 1) < 0) {
+    if (frame_queue_init(&video_q, VIDEO_PICTURE_QUEUE_SIZE, 1) < 0) {
         printf("frame_queue_init video_q ERROR");
         return;
     }
@@ -58,7 +58,7 @@ void read_thread(char *url, int audio_open()) {
 
 
     /* prepare audio output */
-    if ((ret = audio_open(NULL)) < 0) {
+    if ((ret = audio_open()) < 0) {
         printf("audio_open ERROR");
     }
     audio_buf_size = 0;
