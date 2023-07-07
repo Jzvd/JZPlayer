@@ -3,6 +3,18 @@
 #include "libavformat/avformat.h"
 #include "libavutil/imgutils.h"
 #include "libswscale/swscale.h"
+AVStream *audio_steam;
+AVStream *video_steam;
+AVCodecContext *audio_ctx;
+struct SwsContext *sws_ctx;
+
+FrameQueue audio_q;
+FrameQueue video_q;
+
+unsigned int audio_buf_size; /* in bytes */
+int audio_buf_index; /* in bytes */
+
+AVFrame *avFrameRGBA;
 
 void read_thread(const char *url, int audio_open()) {
     //初始化一些东西

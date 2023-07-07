@@ -14,15 +14,15 @@ extern "C" {
 #include "jzplayer.h"
 #include <libavutil/avutil.h>
 
-//extern AVStream *audio_steam;
-//extern AVStream *video_steam;
-//extern AVCodecContext *audio_ctx;
-//extern struct SwsContext *sws_ctx;
-//extern FrameQueue audio_q;
-//extern FrameQueue video_q;
-//extern unsigned int audio_buf_size; /* in bytes */
-//extern int audio_buf_index; /* in bytes */
-//extern AVFrame *avFrameRGBA;
+extern AVStream *audio_steam;
+extern AVStream *video_steam;
+extern AVCodecContext *audio_ctx;
+extern struct SwsContext *sws_ctx;
+extern FrameQueue audio_q;
+extern FrameQueue video_q;
+extern unsigned int audio_buf_size; /* in bytes */
+extern int audio_buf_index; /* in bytes */
+extern AVFrame *avFrameRGBA;
 
 double last_pts = 0;
 double frame_timer = 0;
@@ -154,6 +154,23 @@ int audio_open() {
     AAudioStreamBuilder_delete(streamBuilder);
     frame_size = av_samples_get_buffer_size(NULL, PLAY_CHANNELS, 1,
                                             PLAY_FORMAT, 1);
+
+    av_channel_layout_copy(&PLAY_ch_layout, &audio_ctx->ch_layout);
+    PLAY_ch_layout.nb_channels = PLAY_CHANNELS;
+    swr_ctx = swr_alloc();
+    swr_alloc_set_opts2(&swr_ctx,
+                        &PLAY_ch_layout, PLAY_FORMAT, PLAY_SAMPLERATE,
+                        &audio_ctx->ch_layout, audio_ctx->sample_fmt,
+                        audio_ctx->sample_rate,
+                        0, NULL);
+    if (!swr_ctx || swr_init(swr_ctx) < 0) {
+        av_log(NULL, AV_LOG_ERROR,
+               "Cannot create sample rate converter for conversion of %d Hz %s %d channels to %d Hz %s %d channels!\n");
+        swr_free(&swr_ctx);
+    }
+    audio_buf_size = 0;
+    audio_buf_index = 0;
+    AAudioStream_requestStart(stream_);
     return 0;
 }
 void *read_thread1() {
@@ -183,6 +200,8 @@ Java_org_jzvd_jzplayer_MainActivity_start(JNIEnv *env, jobject thiz, jobject sur
     pthread_t read_th;
     pthread_create(&read_th, NULL,
                    reinterpret_cast<void *(*)(void *)>(read_thread1), NULL);  //创建线程写数据
+
+
 
     ANativeWindow_Buffer windowBuffer;
     AVPacket *pkt = av_packet_alloc();

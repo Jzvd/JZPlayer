@@ -5,10 +5,19 @@
 
 const char *video_url = "http://out-20170815011809382-tto5l35rgt.oss-cn-shanghai.aliyuncs.com/video/25ae1b1c-1767b2a5e44-0007-1823-c86-de200.mp4?Expires=1639071363&OSSAccessKeyId=LTAIwkKSLcUfI2u4";
 
+extern AVStream *audio_steam;
+extern AVStream *video_steam;
+extern AVCodecContext *audio_ctx;
+extern struct SwsContext *sws_ctx;
+extern FrameQueue audio_q;
+extern FrameQueue video_q;
+extern unsigned int audio_buf_size; /* in bytes */
+extern int audio_buf_index; /* in bytes */
+extern AVFrame *avFrameRGBA;
+
 SDL_Window *screen = NULL;
 SDL_Texture *texture = NULL;
 SDL_Renderer *renderer = NULL;
-static SDL_AudioDeviceID audio_dev;
 
 #define SDL_AUDIO_MIN_BUFFER_SIZE 512
 /* Calculate actual buffer size keeping in mind not cause too frequent audio callbacks */
@@ -174,6 +183,7 @@ int audio_open() {
         return -1;
     }
     SDL_PauseAudioDevice(audio_dev, 0);
+
     return spec.size;//8192
 }
 
