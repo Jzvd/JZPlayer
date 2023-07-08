@@ -21,7 +21,7 @@ set_target_properties(swscale PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/l
 add_library( # Sets the name of the library.
         jzplayer
         SHARED
-        native-lib.cpp util.h ${jzmpeg_c})
+        native-lib.cpp ${jzmpeg_c})
 find_library( # Sets the name of the path variable.
         log-lib
         log)

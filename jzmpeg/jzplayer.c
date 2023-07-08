@@ -1,4 +1,3 @@
-#include "L06_audio_video_sync.h"
 #include "jzplayer.h"
 #include "libavformat/avformat.h"
 #include "libavutil/imgutils.h"
@@ -106,9 +105,4 @@ void read_thread(const char *url, int audio_open()) {
         av_frame_unref(frm);
     }
     printf("read thread over\n");
-}
-
-
-void jzplayer() {
-
 }
